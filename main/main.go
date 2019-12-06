@@ -15,11 +15,11 @@ from the client, forwarding them to the network manager and calling implementati
 package main
 
 import (
-    "../network"
-    "encoding/json"
-    "fmt"
-    "log"
-    "os"
+	"../network"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 )
 
 // Path to json parameters file
@@ -46,5 +46,5 @@ func loadParameters(file string) network.Parameters {
 
 // Main entrypoint for the mutual exclusion program
 func main() {
-    fmt.Println("Test")
+	fmt.Println("Test")
 }

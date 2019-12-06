@@ -1,5 +1,5 @@
 /*
-Lab 2 - mutual exclusion
+Lab 3 - Chang et Roberts avec pannes
 File: network/protocol.go
 Authors: Jael Dubey, Luc Wachter
 Go version: 1.13.4 (linux/amd64)
