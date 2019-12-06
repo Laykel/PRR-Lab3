@@ -9,10 +9,10 @@ Main entrypoint for the election algorithm program.
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "log"
-    "os"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 )
 
 // Path to json parameters file
@@ -20,9 +20,9 @@ const parametersFile = "main/parameters.json"
 
 // Read constants from parameters file
 type Parameters struct {
-    InitialPort    uint16 `json:"initial_port"`
-    NbProcesses    uint8  `json:"nb_of_processes"`
-    ProcessAddress string `json:"process_address1"`
+	InitialPort    uint16 `json:"initial_port"`
+	NbProcesses    uint8  `json:"nb_of_processes"`
+	ProcessAddress string `json:"process_address1"`
 }
 
 var Params Parameters
@@ -48,7 +48,7 @@ func loadParameters(file string) Parameters {
 
 // Main entrypoint for the mutual exclusion program
 func main() {
-    Params = loadParameters(parametersFile)
+	Params = loadParameters(parametersFile)
 
 	fmt.Println("Test " + Params.ProcessAddress)
 }

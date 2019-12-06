@@ -9,13 +9,12 @@ Handles all reading and writing to the network.
 package network
 
 import (
-	"log"
-	"net"
-	"strings"
+    "log"
+    "net"
 )
 
 // Listen to UDP packets
-func Listen(address string, port int, req chan string) {
+func Listen(address string, port int, req chan []byte) {
 	// Create UDP connection
 	conn, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.ParseIP(address),
@@ -36,7 +35,7 @@ func Listen(address string, port int, req chan string) {
 		}
 
 		// Clean up message
-		message := strings.TrimSpace(string(buffer[:length]))
+		message := buffer[:length]
 
 		// Send message back to main routine
 		req <- message
@@ -44,9 +43,13 @@ func Listen(address string, port int, req chan string) {
 }
 
 // Send bytes to recipient
-func Send(message []byte, address string, port string) {
+func Send(message []byte, address string, port int) {
 	// Connect to recipient's server
-	conn, err := net.Dial("udp", address+":"+port)
+	conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
+		IP:   net.ParseIP(address),
+		Port: port,
+	})
+
 	if err != nil {
 		log.Fatal(err)
 	}
