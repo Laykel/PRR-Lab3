@@ -1,5 +1,5 @@
 /*
-Lab 3 - Chang et Roberts avec pannes
+Lab 3 - Chang and Roberts with failures
 File: network/connection.go
 Authors: Jael Dubey, Luc Wachter
 Go version: 1.13.4 (linux/amd64)

@@ -1,33 +1,35 @@
 /*
-Lab 3 - ...
+Lab 3 - Chang and Roberts with failures
 File: main/main.go
 Authors: Jael Dubey, Luc Wachter
 Go version: 1.13.4 (linux/amd64)
 
-Main entrypoint for the mutual exclusion program.
-
-The access to the shared variable is guaranteed to be mutually exclusive
-thanks to the Carvalho-Roucairol algorithm.
-
-This file contains the central part of the algorithm, receiving requests
-from the client, forwarding them to the network manager and calling implementation functions.
+Main entrypoint for the election algorithm program.
 */
 package main
 
 import (
-	"../network"
-	"encoding/json"
-	"fmt"
-	"log"
-	"os"
+    "encoding/json"
+    "fmt"
+    "log"
+    "os"
 )
 
 // Path to json parameters file
 const parametersFile = "main/parameters.json"
 
+// Read constants from parameters file
+type Parameters struct {
+    InitialPort    uint16 `json:"initial_port"`
+    NbProcesses    uint8  `json:"nb_of_processes"`
+    ProcessAddress string `json:"process_address1"`
+}
+
+var Params Parameters
+
 // Load parameters from json file
-func loadParameters(file string) network.Parameters {
-	var params network.Parameters
+func loadParameters(file string) Parameters {
+	var params Parameters
 
 	// Read parameters file
 	configFile, err := os.Open(file)
@@ -46,5 +48,7 @@ func loadParameters(file string) network.Parameters {
 
 // Main entrypoint for the mutual exclusion program
 func main() {
-	fmt.Println("Test")
+    Params = loadParameters(parametersFile)
+
+	fmt.Println("Test " + Params.ProcessAddress)
 }

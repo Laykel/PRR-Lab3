@@ -1,5 +1,5 @@
 /*
-Lab 3 - Chang et Roberts avec pannes
+Lab 3 - Chang and Roberts with failures
 File: network/protocol.go
 Authors: Jael Dubey, Luc Wachter
 Go version: 1.13.4 (linux/amd64)
@@ -20,15 +20,6 @@ const (
 	ReleaseMessageType  = 1
 	SetValueMessageType = 2
 )
-
-// Read constants from parameters.json file
-type Parameters struct {
-	InitialPort    uint16 `json:"initial_port"`
-	NbProcesses    uint8  `json:"nb_of_processes"`
-	ProcessAddress string `json:"process_address1"`
-}
-
-var Params Parameters
 
 // Message to request and release the critical section
 type MessageCS struct {
