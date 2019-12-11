@@ -1,4 +1,4 @@
-# PRR - Laboratoire 3 : ...
+# PRR - Laboratoire 3 : Chang et Roberts avec pannes
 
 _Auteurs : Jael Dubey, Luc Wachter_
 

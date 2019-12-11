@@ -1,5 +1,17 @@
 {
-  "initial_port": 9706,
   "nb_of_processes": 3,
-  "process_address1": "127.0.0.1"
+  "processes": [
+    {
+      "address": "127.0.0.1:9706",
+      "aptitude": 12
+    },
+    {
+      "address": "127.0.0.1:9707",
+      "aptitude": 3
+    },
+    {
+      "address": "127.0.0.1:9708",
+      "aptitude": 9
+    }
+  ]
 }
