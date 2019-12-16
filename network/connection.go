@@ -9,8 +9,8 @@ Handles all reading and writing to the network.
 package network
 
 import (
-    "log"
-    "net"
+	"log"
+	"net"
 )
 
 // Listen to UDP packets

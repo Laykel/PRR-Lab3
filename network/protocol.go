@@ -16,22 +16,24 @@ import (
 )
 
 const (
-	RequestMessageType  = 0
-	ReleaseMessageType  = 1
-	SetValueMessageType = 2
+	AnnounceMessageType    = 0
+	ResultMessageType      = 1
+	AcknowledgeMessageType = 2
 )
 
-// Message to request and release the critical section
-type MessageCS struct {
-	ReqType    uint8
-	ProcessNbr uint8
-	Timestamp  uint32
+type Announce struct {
+	MessageType      uint8
+	VisitedProcesses map[uint32]uint32 // Process number - aptitude
 }
 
-// Message to update the shared variable
-type SetVariable struct {
-	ReqType uint8
-	Value   int32
+type Result struct {
+	MessageType      uint8
+	Elect            uint8
+	VisitedProcesses []uint32 // Process number
+}
+
+type Acknowledge struct {
+	MessageType uint8
 }
 
 // Encode given struct as big endian bytes and return bytes buffer
@@ -44,26 +46,4 @@ func Encode(message interface{}) []byte {
 	}
 
 	return buffer.Bytes()
-}
-
-// Decode bytes from MessageCS back to struct
-func DecodeMessage(buffer []byte) MessageCS {
-	message := MessageCS{}
-	err := binary.Read(bytes.NewReader(buffer), binary.BigEndian, &message)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return message
-}
-
-// Decode bytes from SetVariable back to struct
-func DecodeSetVariable(buffer []byte) SetVariable {
-	message := SetVariable{}
-	err := binary.Read(bytes.NewReader(buffer), binary.BigEndian, &message)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return message
 }

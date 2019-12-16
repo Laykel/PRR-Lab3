@@ -51,4 +51,7 @@ func main() {
 	Params = loadParameters(parametersFile)
 
 	fmt.Println("Test " + Params.ProcessAddress)
+
+	// Run the UDP receiver
+	// go Listen()
 }

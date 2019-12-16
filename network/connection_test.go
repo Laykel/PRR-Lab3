@@ -50,6 +50,7 @@ func TestListen(t *testing.T) {
 
 	t.Run("Reading simple message should work", func(t *testing.T) {
 		// Send message to server
+		// Mock Send function
 		conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
 			IP:   net.ParseIP(address),
 			Port: port,
@@ -98,9 +99,9 @@ func TestSend(t *testing.T) {
 
 		got := <-ch
 
-        // Compare result with wanted result
-        if !reflect.DeepEqual(got, tt.message) {
-            t.Errorf("Listen() got %v, wanted %v.", got, string(tt.message))
-        }
+		// Compare result with wanted result
+		if !reflect.DeepEqual(got, tt.message) {
+			t.Errorf("Listen() got %v, wanted %v.", got, string(tt.message))
+		}
 	}
 }
