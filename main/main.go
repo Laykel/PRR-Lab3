@@ -11,7 +11,9 @@ package main
 import (
 	"../network"
 	"encoding/json"
+	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 )
@@ -83,16 +85,49 @@ func main() {
 		select {
 
 		case <-election:
-			// TODO Send announcement
+			// TODO Send ANNOUNCEMENT{(processId, aptitude)}
 			state = network.AnnounceMessageType
 		case <-getTheChosenOne:
+
 			
 		case <-announcement:
-			if  {
-				
+			// TODO Receive ANNOUNCEMENT and remove next line
+			var list network.Announce
+
+			_, ok := list.VisitedProcesses[processId]
+			if ok  {
+				// TODO keyOfMax = Bad English?
+				var maxApt, keyOfMax uint8
+				for k, v := range list.VisitedProcesses {
+					if maxApt < v {
+						maxApt = v
+						keyOfMax = k
+					}
+				}
+				theChosenOne = keyOfMax
+				// TODO Send RESULT(theChosenOne, {processId})
+				state = network.ResultMessageType
+			} else {
+				list.VisitedProcesses[processId] = aptitude
+				// TODO Send ANNOUNCEMENT(list.VisitedProcesses)
+				state = network.AnnounceMessageType
 			}
 		case <-result:
+			// TODO Receive RESULT and remove next line
+			var list network.Result
 
+			ok := list.VisitedProcesses[processId]
+			if ok {
+				break
+			} else if state == network.ResultMessageType && theChosenOne != list.Elect {
+				// TODO Send ANNOUNCEMENT({processId, aptitude})
+				state = network.AnnounceMessageType
+			} else if state == network.AnnounceMessageType {
+				theChosenOne = list.Elect
+				list.VisitedProcesses[processId] = true
+				// TODO Send RESULT(theChoseOne, list.VisitedProcesses)
+				state = network.ResultMessageType
+			}
 		}
 	}
 }

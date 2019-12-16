@@ -23,13 +23,13 @@ const (
 
 type Announce struct {
 	MessageType      uint8
-	VisitedProcesses map[uint32]uint32 // Process number - aptitude
+	VisitedProcesses map[uint8]uint8 // Process number - aptitude
 }
 
 type Result struct {
 	MessageType      uint8
 	Elect            uint8
-	VisitedProcesses []uint32 // Process number
+	VisitedProcesses map[uint8]bool // Process number
 }
 
 type Acknowledge struct {
