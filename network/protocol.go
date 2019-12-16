@@ -9,18 +9,21 @@ encoding and decoding functions for messages
 */
 package network
 
-import (
-	"bytes"
-	"encoding/binary"
-	"log"
-)
-
 const (
 	AnnounceMessageType    = 0
 	ResultMessageType      = 1
 	AcknowledgeMessageType = 2
 )
 
+// Message for an election
+// Can either be an Announcement message, a Result message or an Ack
+type ElectionMessage struct {
+    MessageType      uint8
+    Elect            uint8
+    VisitedProcesses map[uint8]uint8 // Process number - aptitude
+}
+
+// TODO REMOVE ALL OTHER MESSAGE TYPE
 type Announce struct {
 	MessageType      uint8
 	VisitedProcesses map[uint8]uint8 // Process number - aptitude
@@ -36,14 +39,8 @@ type Acknowledge struct {
 	MessageType uint8
 }
 
-// Encode given struct as big endian bytes and return bytes buffer
-func Encode(message interface{}) []byte {
-	buffer := &bytes.Buffer{}
-	// Write struct's data as bytes
-	err := binary.Write(buffer, binary.BigEndian, message)
-	if err != nil {
-		log.Fatal(err)
-	}
+// Sends announce message to next server
+// If no acknowledgment is received, ...
+func SendAnnounce() {
 
-	return buffer.Bytes()
 }

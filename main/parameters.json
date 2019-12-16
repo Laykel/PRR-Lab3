@@ -1,5 +1,5 @@
 {
-  "nb_of_processes": 3,
+  "nb_of_processes": 5,
   "processes": [
     {
       "address": "127.0.0.1:9706",
@@ -12,6 +12,14 @@
     {
       "address": "127.0.0.1:9708",
       "aptitude": 9
+    },
+    {
+      "address": "127.0.0.1:9709",
+      "aptitude": 6
+    },
+    {
+      "address": "127.0.0.1:9710",
+      "aptitude": 4
     }
   ]
 }
