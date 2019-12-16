@@ -9,55 +9,58 @@ Handles all reading and writing to the network.
 package network
 
 import (
-	"log"
+    "encoding/gob"
+    "log"
 	"net"
 )
 
 // Listen to UDP packets
-func Listen(address string, port int, req chan []byte) {
+func Listen(address string, port int, req chan ElectionMessage) {
 	// Create UDP connection
 	conn, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.ParseIP(address),
 		Port: port,
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
+    checkError(err)
 	defer conn.Close()
 
+	// Initialize decoder
+	gob.Register(ElectionMessage{})
+	decoder := gob.NewDecoder(conn)
+
 	for {
-		buffer := make([]byte, 1024)
+	    // Read message from network
+	    message := ElectionMessage{}
 
-		// Read packet from remote
-		length, _, err := conn.ReadFromUDP(buffer)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Clean up message
-		message := buffer[:length]
+        err = decoder.Decode(message)
+        checkError(err)
 
 		// Send message back to main routine
 		req <- message
 	}
 }
 
-// Send bytes to recipient
-func Send(message []byte, address string, port int) {
+// Send any struct to recipient as Gob
+func SendGob(message ElectionMessage, address string, port int) {
 	// Connect to recipient's server
 	conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
 		IP:   net.ParseIP(address),
 		Port: port,
 	})
-
-	if err != nil {
-		log.Fatal(err)
-	}
+    checkError(err)
 	defer conn.Close()
 
-	// Send encoded message
-	_, err = conn.Write(message)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Encode message as Gob and send it
+	encoder := gob.NewEncoder(conn)
+	err = encoder.Encode(message)
+	checkError(err)
+
+	// TODO wait for ACK
+}
+
+// Simply crash if an error occurred
+func checkError(err error) {
+    if err != nil {
+        log.Fatal(err)
+    }
 }
