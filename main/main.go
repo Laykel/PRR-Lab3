@@ -9,10 +9,11 @@ Main entrypoint for the election algorithm program.
 package main
 
 import (
+	"../network"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 // Path to json parameters file
@@ -20,9 +21,13 @@ const parametersFile = "main/parameters.json"
 
 // Read constants from parameters file
 type Parameters struct {
-	InitialPort    uint16 `json:"initial_port"`
-	NbProcesses    uint8  `json:"nb_of_processes"`
-	ProcessAddress string `json:"process_address1"`
+	NbProcesses    uint8     `json:"nb_of_processes"`
+	ProcessAddress []Process `json:"processes"`
+}
+
+type Process struct {
+	Address  string `json:"address"`
+	Aptitude uint8  `json:"aptitude"`
 }
 
 var Params Parameters
@@ -50,8 +55,44 @@ func loadParameters(file string) Parameters {
 func main() {
 	Params = loadParameters(parametersFile)
 
-	fmt.Println("Test " + Params.ProcessAddress)
+	// Create channels to communicate with the Network routine
+	election := make(chan uint8)
+	getTheChosenOne := make(chan uint8)
+	announcement := make(chan uint8)
+	result := make(chan uint8)
 
-	// Run the UDP receiver
-	// go Listen()
+	var nbProcesses uint8
+	var processId uint8
+	var aptitude uint8
+	var state uint8
+	var theChosenOne uint8
+
+	if len(os.Args) == 2 {
+		tmp, _ := strconv.Atoi(os.Args[1])
+		processId = uint8(tmp)
+	} else {
+		processId = 0
+	}
+
+	nbProcesses = Params.NbProcesses
+	aptitude = Params.ProcessAddress[processId].Aptitude
+
+	// TODO Launch network go routine
+
+	for {
+		select {
+
+		case <-election:
+			// TODO Send announcement
+			state = network.AnnounceMessageType
+		case <-getTheChosenOne:
+			
+		case <-announcement:
+			if  {
+				
+			}
+		case <-result:
+
+		}
+	}
 }
