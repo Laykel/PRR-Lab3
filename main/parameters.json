@@ -2,23 +2,28 @@
   "nb_of_processes": 5,
   "processes": [
     {
-      "address": "127.0.0.1:9706",
-      "aptitude": 12
+      "address": "127.0.0.1",
+      "port": 9706,
+      "aptitude": 10
     },
     {
-      "address": "127.0.0.1:9707",
+      "address": "127.0.0.1",
+      "port": 9707,
       "aptitude": 3
     },
     {
-      "address": "127.0.0.1:9708",
+      "address": "127.0.0.1",
+      "port": 9708,
       "aptitude": 9
     },
     {
-      "address": "127.0.0.1:9709",
-      "aptitude": 6
+      "address": "127.0.0.1",
+      "port": 9709,
+      "aptitude": 12
     },
     {
-      "address": "127.0.0.1:9710",
+      "address": "127.0.0.1",
+      "port": 9710,
       "aptitude": 4
     }
   ]

@@ -75,3 +75,16 @@ func checkError(err error) {
 		log.Fatal(err)
 	}
 }
+
+// TODO doesn't work
+func AreYouThere(address string) {
+	for {
+		// Connect to recipient's server
+		conn, err := net.Dial("udp", address)
+
+		if err == nil {
+			conn.Close()
+			break
+		}
+	}
+}

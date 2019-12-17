@@ -22,25 +22,3 @@ type ElectionMessage struct {
 	Elect            uint8
 	VisitedProcesses map[uint8]uint8 // Process number - aptitude
 }
-
-// TODO REMOVE ALL OTHER MESSAGE TYPE
-type Announce struct {
-	MessageType      uint8
-	VisitedProcesses map[uint8]uint8 // Process number - aptitude
-}
-
-type Result struct {
-	MessageType      uint8
-	Elect            uint8
-	VisitedProcesses map[uint8]bool // Process number
-}
-
-type Acknowledge struct {
-	MessageType uint8
-}
-
-// Sends announce message to next server
-// If no acknowledgment is received, ...
-func SendAnnouncement() {
-
-}

@@ -1,19 +1,14 @@
-/*
-Lab 3 - Chang and Roberts with failures
-File: main/main.go
-Authors: Jael Dubey, Luc Wachter
-Go version: 1.13.4 (linux/amd64)
-
-Main entrypoint for the election algorithm program.
-*/
 package main
 
 import (
-    "../network"
-    "encoding/json"
-    "log"
-    "os"
-    "strconv"
+	"../election_algorithm"
+	"../network"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+	"time"
 )
 
 // Path to json parameters file
@@ -27,6 +22,7 @@ type Parameters struct {
 
 type Process struct {
 	Address  string `json:"address"`
+	Port     int    `json:"port"`
 	Aptitude uint8  `json:"aptitude"`
 }
 
@@ -51,20 +47,28 @@ func loadParameters(file string) Parameters {
 	return params
 }
 
-// Main entrypoint for the mutual exclusion program
+func checkIfAllSitesAreReady(processId uint8, nbSites uint8, address string, initialPort int) {
+	for i := uint8(0); i < nbSites; i++ {
+		if i != processId {
+			recipientPort := strconv.Itoa(initialPort + int(i))
+			recipientAddress := address + ":" + recipientPort
+
+			network.AreYouThere(recipientAddress)
+		}
+	}
+}
+
 func main() {
 	Params = loadParameters(parametersFile)
 
 	// Create channels to communicate with the Network routine
+	action := make(chan network.ElectionMessage)
 	election := make(chan uint8)
 	getTheChosenOne := make(chan uint8)
-	announcement := make(chan uint8)
-	result := make(chan uint8)
 
-	var nbProcesses uint8
+	//var nbProcesses uint8
 	var processId uint8
 	var aptitude uint8
-	var state uint8
 	var theChosenOne uint8
 
 	if len(os.Args) == 2 {
@@ -74,57 +78,36 @@ func main() {
 		processId = 0
 	}
 
-	nbProcesses = Params.NbProcesses
-	aptitude = Params.ProcessAddress[processId].Aptitude
+	//nbProcesses = Params.NbProcesses
+	aptitude = Params.ProcessAddress[processId-1].Aptitude
 
-	// TODO Launch network go routine
+	address := Params.ProcessAddress[processId-1].Address
+	port := Params.ProcessAddress[processId-1].Port
+
+	theChosenOne = processId
+
+	fmt.Println("Wait until all sites are ready...")
+	go network.Listen(address, port, action)
+	//checkIfAllSitesAreReady(processId, nbProcesses, address, Params.ProcessAddress[0].Port)
+	//time.Sleep(30 * time.Second)
+	fmt.Println("All sites are ready. Algorithm will start ! ")
+
+	// TODO ChangAndRoberts should not need address and port
+	go election_algorithm.ChangAndRoberts(processId, aptitude, address, port, election, getTheChosenOne, action)
+
+	// TODO Is it the correct way to launch election?
+	election <- 1
 
 	for {
 		select {
 
-		case <-election:
-			// TODO Send ANNOUNCEMENT{(processId, aptitude)}
-			state = network.AnnouncementMessageType
-		case <-getTheChosenOne:
+		// TODO echo the chosen one periodically
+		case <- time.After(2 * 1 * time.Second):
+			println("salut")
 
-		case <-announcement:
-			// TODO Receive ANNOUNCEMENT and remove next line
-			var list network.Announce
-
-			_, ok := list.VisitedProcesses[processId]
-			if ok {
-				// TODO keyOfMax = Bad English?
-				var maxApt, keyOfMax uint8
-				for k, v := range list.VisitedProcesses {
-					if maxApt < v {
-						maxApt = v
-						keyOfMax = k
-					}
-				}
-				theChosenOne = keyOfMax
-				// TODO Send RESULT(theChosenOne, {processId})
-				state = network.ResultMessageType
-			} else {
-				list.VisitedProcesses[processId] = aptitude
-				// TODO Send ANNOUNCEMENT(list.VisitedProcesses)
-				state = network.AnnouncementMessageType
-			}
-		case <-result:
-			// TODO Receive RESULT and remove next line
-			var list network.Result
-
-			ok := list.VisitedProcesses[processId]
-			if ok {
-				break
-			} else if state == network.ResultMessageType && theChosenOne != list.Elect {
-				// TODO Send ANNOUNCEMENT({processId, aptitude})
-				state = network.AnnouncementMessageType
-			} else if state == network.AnnouncementMessageType {
-				theChosenOne = list.Elect
-				list.VisitedProcesses[processId] = true
-				// TODO Send RESULT(theChoseOne, list.VisitedProcesses)
-				state = network.ResultMessageType
-			}
+		case theChosenOne = <-getTheChosenOne:
+			fmt.Printf("The Chosen One is %d\n", theChosenOne)
 		}
+
 	}
 }
