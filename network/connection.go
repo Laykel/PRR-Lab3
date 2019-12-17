@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 	"time"
 )
 
@@ -66,6 +67,24 @@ func Listen(address string, port int, req chan ElectionMessage) {
 	}
 }
 
+// Listen TCP (used to ping)
+func ListenTCP(address string, port int) {
+	// Listen for incoming traffic
+	listener, err := net.Listen("tcp", address + ":" + strconv.Itoa(port))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		_, err := listener.Accept()
+		if err != nil {
+			log.Print("Error accepting connections: ", err)
+			continue
+		}
+	}
+}
+
+
 // Send any struct to recipient as Gob
 func SendGob(message ElectionMessage, address string, port int) {
 	// Connect to recipient's server
@@ -96,23 +115,13 @@ func SendGob(message ElectionMessage, address string, port int) {
 }
 
 // Ping recipient
-func AreYouThere(recipientId uint8, processId uint8) {
+func AreYouThere(address string) {
 	for {
-		senderIP := Params.ProcessAddress[recipientId].Address
-		senderPort := Params.ProcessAddress[recipientId].Port
+		// Connect to recipient's server
+		conn, err := net.Dial("tcp", address)
 
-		SendGob(ElectionMessage{
-			MessageType:     AreYouThereMessageType,
-			ProcessIdSender: processId,
-		}, senderIP, senderPort)
-
-		timeout := time.After(10 * time.Millisecond)
-
-		// Wait for acknowledgment
-		select {
-		case <-presence:
-			return
-		case <-timeout:
+		if err == nil {
+			conn.Close()
 			break
 		}
 	}

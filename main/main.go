@@ -33,10 +33,13 @@ func loadParameters(file string) network.Parameters {
 	return params
 }
 
-func checkIfAllSitesAreReady(processId uint8, nbSites uint8) {
-	for i := uint8(0); i < nbSites; i++ {
-		if i != processId {
-			network.AreYouThere(i, processId)
+func checkIfAllSitesAreReady(processId uint8) {
+	for i := uint8(0); i < network.Params.NbProcesses; i++ {
+		if i != processId-1 {
+			recipientPort := strconv.Itoa(network.Params.ProcessAddress[0].Port + int(i))
+			recipientAddress := network.Params.ProcessAddress[i].Address + ":" + recipientPort
+
+			network.AreYouThere(recipientAddress)
 		}
 	}
 }
@@ -49,7 +52,7 @@ func main() {
 	election := make(chan uint8)
 	getTheChosenOne := make(chan uint8)
 
-	var nbProcesses uint8
+	//var nbProcesses uint8
 	var processId uint8
 	var aptitude uint8
 	var theChosenOne uint8
@@ -61,7 +64,7 @@ func main() {
 		processId = 0
 	}
 
-	nbProcesses = network.Params.NbProcesses
+	//nbProcesses = network.Params.NbProcesses
 	aptitude = network.Params.ProcessAddress[processId-1].Aptitude
 
 	address := network.Params.ProcessAddress[processId-1].Address
@@ -71,7 +74,8 @@ func main() {
 
 	fmt.Println("Wait until all sites are ready...")
 	go network.Listen(address, port, action)
-	checkIfAllSitesAreReady(processId, nbProcesses)
+	go network.ListenTCP(address, port)
+	checkIfAllSitesAreReady(processId)
 	fmt.Println("All sites are ready. Algorithm will start!")
 
 	// TODO ChangAndRoberts should not need address and port
