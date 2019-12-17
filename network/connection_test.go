@@ -54,7 +54,7 @@ func TestListen(t *testing.T) {
 	}
 
 	t.Run("Reading simple message should work", func(t *testing.T) {
-        // ---------------- Mock Send function
+		// ---------------- Mock Send function
 		// Send message to server
 		conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
 			IP:   net.ParseIP(address),
@@ -106,7 +106,7 @@ func TestSendGob(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-            // Send message to server
+			// Send message to server
 			SendGob(tt.message, tt.address, tt.port)
 		})
 

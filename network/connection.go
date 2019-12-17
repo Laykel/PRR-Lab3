@@ -9,13 +9,14 @@ Handles all reading and writing to the network.
 package network
 
 import (
-    "encoding/gob"
-    "fmt"
-    "log"
-    "net"
-    "time"
+	"encoding/gob"
+	"fmt"
+	"log"
+	"net"
+	"time"
 )
 
+// Pass acknowledgment from listener to sender
 var ack = make(chan ElectionMessage)
 
 // Listen to UDP packets
@@ -35,20 +36,23 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		// Read message from network
 		message := ElectionMessage{}
 
-        decoder := gob.NewDecoder(conn)
+		decoder := gob.NewDecoder(conn)
 		err = decoder.Decode(&message)
 		checkError(err)
 
 		// Depending on the message type
 		if message.MessageType != AcknowledgeMessageType {
-            // Send message back to main routine
-            req <- message
+			// Send message back to main routine
+			req <- message
 
-            // Send acknowledge message
-            //go SendGob(ElectionMessage{MessageType: AcknowledgeMessageType}, senderIP, senderPort)
-        } else {
-            ack <- message
-        }
+			// Send acknowledge message
+			SendMessage(ElectionMessage{
+                MessageType:      AcknowledgeMessageType,
+                ProcessIdSender:  message.ProcessIdSender - 1,
+            })
+		} else {
+			ack <- message
+		}
 	}
 }
 
@@ -68,17 +72,17 @@ func SendGob(message ElectionMessage, address string, port int) {
 	checkError(err)
 
 	if message.MessageType != AcknowledgeMessageType {
-        timeout := time.After(1 * time.Second)
+		timeout := time.After(1 * time.Second)
 
-        // Wait for acknowledgment
-        select {
-        case <-ack:
-           return
-        case <-timeout:
-           fmt.Println("Timeout") // TODO Do something when we timeout
-           return
-        }
-    }
+		// Wait for acknowledgment
+		select {
+		case <-ack:
+			return
+		case <-timeout:
+			fmt.Println("Timeout") // TODO Do something when we timeout
+			return
+		}
+	}
 }
 
 // Simply crash if an error occurred

@@ -22,8 +22,6 @@ func Itob(i int) bool {
 // Main entrypoint for the mutual exclusion program
 func ChangAndRoberts(processId uint8,
 	aptitude uint8,
-	address string,
-	port int,
 	election chan uint8,
 	getTheChosenOne chan uint8,
 	action chan network.ElectionMessage) {
@@ -56,9 +54,10 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.ResultMessageType,
 						Elect:            theChosenOne,
 						VisitedProcesses: make(map[uint8]uint8),
+						ProcessIdSender: processId,
 					}
 					message.VisitedProcesses[processId] = 1
-					network.SendGob(message, address, port)
+					network.SendMessage(message)
 
 					state = network.ResultMessageType
 				} else {
@@ -68,8 +67,9 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.AnnouncementMessageType,
 						Elect:            0,
 						VisitedProcesses: list.VisitedProcesses,
+                        ProcessIdSender: processId,
 					}
-					network.SendGob(message, address, port)
+					network.SendMessage(message)
 
 					state = network.AnnouncementMessageType
 				}
@@ -86,9 +86,10 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.AnnouncementMessageType,
 						Elect:            0,
 						VisitedProcesses: make(map[uint8]uint8),
+                        ProcessIdSender: processId,
 					}
 					message.VisitedProcesses[processId] = aptitude
-					network.SendGob(message, address, port)
+					network.SendMessage(message)
 
 					state = network.AnnouncementMessageType
 				} else if state == network.AnnouncementMessageType {
@@ -99,8 +100,9 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.ResultMessageType,
 						Elect:            theChosenOne,
 						VisitedProcesses: list.VisitedProcesses,
+                        ProcessIdSender: processId,
 					}
-					network.SendGob(message, address, port)
+					network.SendMessage(message)
 
 					state = network.ResultMessageType
 				}
@@ -111,9 +113,10 @@ func ChangAndRoberts(processId uint8,
 				MessageType:      network.AnnouncementMessageType,
 				Elect:            0,
 				VisitedProcesses: make(map[uint8]uint8),
+                ProcessIdSender: processId,
 			}
 			message.VisitedProcesses[processId] = aptitude
-			network.SendGob(message, address, port)
+			network.SendMessage(message)
 
 			state = network.AnnouncementMessageType
 		}

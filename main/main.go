@@ -14,23 +14,9 @@ import (
 // Path to json parameters file
 const parametersFile = "main/parameters.json"
 
-// Read constants from parameters file
-type Parameters struct {
-	NbProcesses    uint8     `json:"nb_of_processes"`
-	ProcessAddress []Process `json:"processes"`
-}
-
-type Process struct {
-	Address  string `json:"address"`
-	Port     int    `json:"port"`
-	Aptitude uint8  `json:"aptitude"`
-}
-
-var Params Parameters
-
 // Load parameters from json file
-func loadParameters(file string) Parameters {
-	var params Parameters
+func loadParameters(file string) network.Parameters {
+	var params network.Parameters
 
 	// Read parameters file
 	configFile, err := os.Open(file)
@@ -59,7 +45,7 @@ func checkIfAllSitesAreReady(processId uint8, nbSites uint8, address string, ini
 }
 
 func main() {
-	Params = loadParameters(parametersFile)
+	network.Params = loadParameters(parametersFile)
 
 	// Create channels to communicate with the Network routine
 	action := make(chan network.ElectionMessage)
@@ -79,10 +65,10 @@ func main() {
 	}
 
 	//nbProcesses = Params.NbProcesses
-	aptitude = Params.ProcessAddress[processId-1].Aptitude
+	aptitude = network.Params.ProcessAddress[processId-1].Aptitude
 
-	address := Params.ProcessAddress[processId-1].Address
-	port := Params.ProcessAddress[processId-1].Port
+	address := network.Params.ProcessAddress[processId-1].Address
+	port := network.Params.ProcessAddress[processId-1].Port
 
 	theChosenOne = processId
 
@@ -93,7 +79,7 @@ func main() {
 	fmt.Println("All sites are ready. Algorithm will start ! ")
 
 	// TODO ChangAndRoberts should not need address and port
-	go election_algorithm.ChangAndRoberts(processId, aptitude, address, port, election, getTheChosenOne, action)
+	go election_algorithm.ChangAndRoberts(processId, aptitude, election, getTheChosenOne, action)
 
 	// TODO Is it the correct way to launch election?
 	election <- 1
@@ -102,12 +88,11 @@ func main() {
 		select {
 
 		// TODO echo the chosen one periodically
-		case <- time.After(2 * 1 * time.Second):
+		case <-time.After(2 * 1 * time.Second):
 			println("salut")
 
 		case theChosenOne = <-getTheChosenOne:
 			fmt.Printf("The Chosen One is %d\n", theChosenOne)
 		}
-
 	}
 }
