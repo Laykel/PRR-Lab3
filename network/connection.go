@@ -9,8 +9,8 @@ Handles all reading and writing to the network.
 package network
 
 import (
-    "encoding/gob"
-    "log"
+	"encoding/gob"
+	"log"
 	"net"
 )
 
@@ -21,22 +21,24 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		IP:   net.ParseIP(address),
 		Port: port,
 	})
-    checkError(err)
+	checkError(err)
 	defer conn.Close()
 
 	// Initialize decoder
 	gob.Register(ElectionMessage{})
-	decoder := gob.NewDecoder(conn)
 
 	for {
-	    // Read message from network
-	    message := ElectionMessage{}
+		// Read message from network
+		message := ElectionMessage{}
 
-        err = decoder.Decode(message)
-        checkError(err)
+        decoder := gob.NewDecoder(conn)
+		err = decoder.Decode(&message)
+		checkError(err)
 
 		// Send message back to main routine
 		req <- message
+
+		// TODO Send ACK
 	}
 }
 
@@ -47,7 +49,7 @@ func SendGob(message ElectionMessage, address string, port int) {
 		IP:   net.ParseIP(address),
 		Port: port,
 	})
-    checkError(err)
+	checkError(err)
 	defer conn.Close()
 
 	// Encode message as Gob and send it
@@ -56,11 +58,20 @@ func SendGob(message ElectionMessage, address string, port int) {
 	checkError(err)
 
 	// TODO wait for ACK
+	//timeout := time.After(1 * time.Second)
+
+	//select {
+	//case <-ack:
+	//    break
+	//case <-timeout:
+	//    fmt.Println("Timeout")
+	//    break
+	//}
 }
 
 // Simply crash if an error occurred
 func checkError(err error) {
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 }

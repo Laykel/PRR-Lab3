@@ -8,7 +8,4 @@ Unit tests for the protocol file
 */
 package network
 
-import (
-	"reflect"
-	"testing"
-)
+import ()

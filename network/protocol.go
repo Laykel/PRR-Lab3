@@ -10,17 +10,17 @@ encoding and decoding functions for messages
 package network
 
 const (
-	AnnounceMessageType    = 0
-	ResultMessageType      = 1
-	AcknowledgeMessageType = 2
+	AnnouncementMessageType = 0
+	ResultMessageType       = 1
+	AcknowledgeMessageType  = 2
 )
 
 // Message for an election
 // Can either be an Announcement message, a Result message or an Ack
 type ElectionMessage struct {
-    MessageType      uint8
-    Elect            uint8
-    VisitedProcesses map[uint8]uint8 // Process number - aptitude
+	MessageType      uint8
+	Elect            uint8
+	VisitedProcesses map[uint8]uint8 // Process number - aptitude
 }
 
 // TODO REMOVE ALL OTHER MESSAGE TYPE
@@ -41,6 +41,6 @@ type Acknowledge struct {
 
 // Sends announce message to next server
 // If no acknowledgment is received, ...
-func SendAnnounce() {
+func SendAnnouncement() {
 
 }

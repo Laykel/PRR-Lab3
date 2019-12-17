@@ -9,6 +9,7 @@ Unit tests for the connection file.
 package network
 
 import (
+	"encoding/gob"
 	"net"
 	"reflect"
 	"testing"
@@ -21,11 +22,11 @@ const (
 )
 
 // Channel for received messages
-var ch chan []byte
+var ch chan ElectionMessage
 
 // Run "server" before running tests
 func init() {
-	ch = make(chan []byte)
+	ch = make(chan ElectionMessage)
 
 	go Listen(address, port, ch)
 }
@@ -46,26 +47,33 @@ func TestListenRun(t *testing.T) {
 
 // Test the Listen function
 func TestListen(t *testing.T) {
-	want := []byte("Simple message")
+	want := ElectionMessage{
+		MessageType:      0,
+		Elect:            0,
+		VisitedProcesses: map[uint8]uint8{2: 3, 3: 4, 4: 1},
+	}
 
 	t.Run("Reading simple message should work", func(t *testing.T) {
+        // ---------------- Mock Send function
 		// Send message to server
-		// Mock Send function
 		conn, err := net.DialUDP("udp", nil, &net.UDPAddr{
 			IP:   net.ParseIP(address),
 			Port: port,
 		})
-
 		if err != nil || conn == nil {
 			t.Error("Error connecting to server: ", err)
 			return
 		}
 		defer conn.Close()
 
-		if _, err = conn.Write(want); err != nil {
+		// Encode message as Gob and send it
+		encoder := gob.NewEncoder(conn)
+		err = encoder.Encode(want)
+		if err != nil {
 			t.Error("Error writing payload: ", err)
 		}
 
+		// ---------------- Test if server got what I sent
 		// Get message from network
 		got := <-ch
 
@@ -77,16 +85,20 @@ func TestListen(t *testing.T) {
 }
 
 // Test Send function
-func TestSend(t *testing.T) {
+func TestSendGob(t *testing.T) {
 	tests := []struct {
 		name    string
-		message []byte
+		message ElectionMessage
 		address string
 		port    int
 	}{
 		{
 			"Sending simple message should work",
-			[]byte("Simple message"),
+			ElectionMessage{
+				MessageType:      0,
+				Elect:            0,
+				VisitedProcesses: map[uint8]uint8{2: 3, 3: 4, 4: 1},
+			},
 			address,
 			port,
 		},
@@ -94,14 +106,16 @@ func TestSend(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Send(tt.message, tt.address, tt.port)
+            // Send message to server
+			SendGob(tt.message, tt.address, tt.port)
 		})
 
+		// Test if server got what I sent
 		got := <-ch
 
 		// Compare result with wanted result
 		if !reflect.DeepEqual(got, tt.message) {
-			t.Errorf("Listen() got %v, wanted %v.", got, string(tt.message))
+			t.Errorf("Listen() got %v, wanted %v.", got, tt.message)
 		}
 	}
 }

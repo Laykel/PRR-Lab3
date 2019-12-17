@@ -9,13 +9,11 @@ Main entrypoint for the election algorithm program.
 package main
 
 import (
-	"../network"
-	"encoding/json"
-	"fmt"
-	"log"
-	"math"
-	"os"
-	"strconv"
+    "../network"
+    "encoding/json"
+    "log"
+    "os"
+    "strconv"
 )
 
 // Path to json parameters file
@@ -86,16 +84,15 @@ func main() {
 
 		case <-election:
 			// TODO Send ANNOUNCEMENT{(processId, aptitude)}
-			state = network.AnnounceMessageType
+			state = network.AnnouncementMessageType
 		case <-getTheChosenOne:
 
-			
 		case <-announcement:
 			// TODO Receive ANNOUNCEMENT and remove next line
 			var list network.Announce
 
 			_, ok := list.VisitedProcesses[processId]
-			if ok  {
+			if ok {
 				// TODO keyOfMax = Bad English?
 				var maxApt, keyOfMax uint8
 				for k, v := range list.VisitedProcesses {
@@ -110,7 +107,7 @@ func main() {
 			} else {
 				list.VisitedProcesses[processId] = aptitude
 				// TODO Send ANNOUNCEMENT(list.VisitedProcesses)
-				state = network.AnnounceMessageType
+				state = network.AnnouncementMessageType
 			}
 		case <-result:
 			// TODO Receive RESULT and remove next line
@@ -121,8 +118,8 @@ func main() {
 				break
 			} else if state == network.ResultMessageType && theChosenOne != list.Elect {
 				// TODO Send ANNOUNCEMENT({processId, aptitude})
-				state = network.AnnounceMessageType
-			} else if state == network.AnnounceMessageType {
+				state = network.AnnouncementMessageType
+			} else if state == network.AnnouncementMessageType {
 				theChosenOne = list.Elect
 				list.VisitedProcesses[processId] = true
 				// TODO Send RESULT(theChoseOne, list.VisitedProcesses)
