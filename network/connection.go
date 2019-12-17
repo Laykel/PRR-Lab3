@@ -9,10 +9,14 @@ Handles all reading and writing to the network.
 package network
 
 import (
-	"encoding/gob"
-	"log"
-	"net"
+    "encoding/gob"
+    "fmt"
+    "log"
+    "net"
+    "time"
 )
+
+var ack = make(chan ElectionMessage)
 
 // Listen to UDP packets
 func Listen(address string, port int, req chan ElectionMessage) {
@@ -35,10 +39,16 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		err = decoder.Decode(&message)
 		checkError(err)
 
-		// Send message back to main routine
-		req <- message
+		// Depending on the message type
+		if message.MessageType != AcknowledgeMessageType {
+            // Send message back to main routine
+            req <- message
 
-		// TODO Send ACK
+            // Send acknowledge message
+            //go SendGob(ElectionMessage{MessageType: AcknowledgeMessageType}, senderIP, senderPort)
+        } else {
+            ack <- message
+        }
 	}
 }
 
@@ -57,16 +67,18 @@ func SendGob(message ElectionMessage, address string, port int) {
 	err = encoder.Encode(message)
 	checkError(err)
 
-	// TODO wait for ACK
-	//timeout := time.After(1 * time.Second)
+	if message.MessageType != AcknowledgeMessageType {
+        timeout := time.After(1 * time.Second)
 
-	//select {
-	//case <-ack:
-	//    break
-	//case <-timeout:
-	//    fmt.Println("Timeout")
-	//    break
-	//}
+        // Wait for acknowledgment
+        select {
+        case <-ack:
+           return
+        case <-timeout:
+           fmt.Println("Timeout") // TODO Do something when we timeout
+           return
+        }
+    }
 }
 
 // Simply crash if an error occurred
