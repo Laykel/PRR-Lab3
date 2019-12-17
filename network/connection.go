@@ -17,7 +17,8 @@ import (
 )
 
 // Pass acknowledgment from listener to sender
-var ack = make(chan ElectionMessage)
+var ack = make(chan bool)
+var presence = make(chan bool)
 
 // Listen to UDP packets
 func Listen(address string, port int, req chan ElectionMessage) {
@@ -41,17 +42,26 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		checkError(err)
 
 		// Depending on the message type
-		if message.MessageType != AcknowledgeMessageType {
+		switch message.MessageType {
+		case AreYouThereMessageType:
+			// Send acknowledge message
+			SendMessage(ElectionMessage{
+				MessageType:     IAmThereMessageType,
+				ProcessIdSender: message.ProcessIdSender - 1,
+			})
+		case IAmThereMessageType:
+			presence <- true
+		case AcknowledgeMessageType:
+			ack <- true
+		default:
 			// Send message back to main routine
 			req <- message
 
 			// Send acknowledge message
 			SendMessage(ElectionMessage{
-                MessageType:      AcknowledgeMessageType,
-                ProcessIdSender:  message.ProcessIdSender - 1,
-            })
-		} else {
-			ack <- message
+				MessageType:     AcknowledgeMessageType,
+				ProcessIdSender: message.ProcessIdSender - 1,
+			})
 		}
 	}
 }
@@ -85,22 +95,32 @@ func SendGob(message ElectionMessage, address string, port int) {
 	}
 }
 
+// Ping recipient
+func AreYouThere(recipientId uint8, processId uint8) {
+	for {
+		senderIP := Params.ProcessAddress[recipientId].Address
+		senderPort := Params.ProcessAddress[recipientId].Port
+
+		SendGob(ElectionMessage{
+			MessageType:     AreYouThereMessageType,
+			ProcessIdSender: processId,
+		}, senderIP, senderPort)
+
+		timeout := time.After(10 * time.Millisecond)
+
+		// Wait for acknowledgment
+		select {
+		case <-presence:
+			return
+		case <-timeout:
+			break
+		}
+	}
+}
+
 // Simply crash if an error occurred
 func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
-	}
-}
-
-// TODO doesn't work
-func AreYouThere(address string) {
-	for {
-		// Connect to recipient's server
-		conn, err := net.Dial("udp", address)
-
-		if err == nil {
-			conn.Close()
-			break
-		}
 	}
 }

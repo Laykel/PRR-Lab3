@@ -54,7 +54,7 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.ResultMessageType,
 						Elect:            theChosenOne,
 						VisitedProcesses: make(map[uint8]uint8),
-						ProcessIdSender: processId,
+						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = 1
 					network.SendMessage(message)
@@ -67,7 +67,7 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.AnnouncementMessageType,
 						Elect:            0,
 						VisitedProcesses: list.VisitedProcesses,
-                        ProcessIdSender: processId,
+						ProcessIdSender:  processId,
 					}
 					network.SendMessage(message)
 
@@ -86,7 +86,7 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.AnnouncementMessageType,
 						Elect:            0,
 						VisitedProcesses: make(map[uint8]uint8),
-                        ProcessIdSender: processId,
+						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = aptitude
 					network.SendMessage(message)
@@ -100,7 +100,7 @@ func ChangAndRoberts(processId uint8,
 						MessageType:      network.ResultMessageType,
 						Elect:            theChosenOne,
 						VisitedProcesses: list.VisitedProcesses,
-                        ProcessIdSender: processId,
+						ProcessIdSender:  processId,
 					}
 					network.SendMessage(message)
 
@@ -113,7 +113,7 @@ func ChangAndRoberts(processId uint8,
 				MessageType:      network.AnnouncementMessageType,
 				Elect:            0,
 				VisitedProcesses: make(map[uint8]uint8),
-                ProcessIdSender: processId,
+				ProcessIdSender:  processId,
 			}
 			message.VisitedProcesses[processId] = aptitude
 			network.SendMessage(message)

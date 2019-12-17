@@ -13,18 +13,20 @@ const (
 	AnnouncementMessageType = 0
 	ResultMessageType       = 1
 	AcknowledgeMessageType  = 2
+	AreYouThereMessageType  = 3
+	IAmThereMessageType     = 4
 )
 
+// Read constants from parameters file
 type Process struct {
-    Address  string `json:"address"`
-    Port     int    `json:"port"`
-    Aptitude uint8  `json:"aptitude"`
+	Address  string `json:"address"`
+	Port     int    `json:"port"`
+	Aptitude uint8  `json:"aptitude"`
 }
 
-// Read constants from parameters file
 type Parameters struct {
-    NbProcesses    uint8     `json:"nb_of_processes"`
-    ProcessAddress []Process `json:"processes"`
+	NbProcesses    uint8     `json:"nb_of_processes"`
+	ProcessAddress []Process `json:"processes"`
 }
 
 var Params Parameters
@@ -40,11 +42,11 @@ type ElectionMessage struct {
 
 // Compute recipient IP and port and send message
 func SendMessage(message ElectionMessage) {
-    nextProcess := (message.ProcessIdSender + 1) % Params.NbProcesses
+	nextProcess := (message.ProcessIdSender + 1) % Params.NbProcesses
 
-    // Send acknowledge message
-    senderIP := Params.ProcessAddress[nextProcess].Address
-    senderPort := Params.ProcessAddress[nextProcess].Port
+	// Send acknowledge message
+	senderIP := Params.ProcessAddress[nextProcess].Address
+	senderPort := Params.ProcessAddress[nextProcess].Port
 
-    SendGob(message, senderIP, senderPort)
+	SendGob(message, senderIP, senderPort)
 }
