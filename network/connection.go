@@ -46,6 +46,11 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		switch message.MessageType {
 		case AcknowledgeMessageType:
 			ack <- true
+		case EchoMessageType:
+			// Send acknowledge message
+			SendMeta(ElectionMessage{
+				MessageType:     AcknowledgeMessageType,
+			}, message.ProcessIdSender)
 		default:
 			// Send message back to main routine
 			req <- message
@@ -90,8 +95,17 @@ func SendGob(message ElectionMessage, address string, port int) {
 	err = encoder.Encode(message)
 	checkError(err)
 
-	if message.MessageType != AcknowledgeMessageType {
-		timeout := time.After(1 * time.Second)
+	timeout := time.After(2 * 1 * time.Second)
+
+	if message.MessageType == EchoMessageType {
+		select {
+		case <-ack:
+			EchoHaveResponse = true
+			return
+		case <-timeout:
+			EchoHaveResponse = false
+		}
+	} else if message.MessageType != AcknowledgeMessageType {
 
 		// Wait for acknowledgment
 		select {

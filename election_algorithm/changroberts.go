@@ -60,7 +60,7 @@ func ChangAndRoberts(processId uint8,
 						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = 1
-					network.SendElectionMessage(message)
+					go network.SendElectionMessage(message)
 
 					log.Printf("Send Result. ChosenOne is %d\n", theChosenOne)
 
@@ -75,7 +75,7 @@ func ChangAndRoberts(processId uint8,
 						VisitedProcesses: list.VisitedProcesses,
 						ProcessIdSender:  processId,
 					}
-					network.SendElectionMessage(message)
+					go network.SendElectionMessage(message)
 
 					log.Printf("Send Announcement after receiving Announcement\n")
 
@@ -99,7 +99,7 @@ func ChangAndRoberts(processId uint8,
 						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = aptitude
-					network.SendElectionMessage(message)
+					go network.SendElectionMessage(message)
 
 					log.Printf("Send Announcement after receiving Result\n")
 
@@ -114,7 +114,7 @@ func ChangAndRoberts(processId uint8,
 						VisitedProcesses: list.VisitedProcesses,
 						ProcessIdSender:  processId,
 					}
-					network.SendElectionMessage(message)
+					go network.SendElectionMessage(message)
 
 					log.Printf("Send result with %d\n", theChosenOne)
 

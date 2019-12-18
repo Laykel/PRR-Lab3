@@ -1,5 +1,5 @@
 {
-  "nb_of_processes": 2,
+  "nb_of_processes": 3,
   "processes": [
     {
       "address": "127.0.0.1",

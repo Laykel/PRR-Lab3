@@ -72,6 +72,8 @@ func main() {
 
 	theChosenOne = processId
 
+	network.EchoHaveResponse = true
+
 	fmt.Println("Wait until all sites are ready...")
 	go network.Listen(address, port, action)
 	go network.ListenTCP(address, port)
@@ -86,9 +88,18 @@ func main() {
 	for {
 		select {
 
-		// TODO echo the chosen one periodically
 		case <-time.After(2 * 1 * time.Second):
-			//println("salut")
+			if network.EchoHaveResponse {
+				if theChosenOne != processId {
+					log.Printf("Send echo to %d\n", theChosenOne)
+					network.SendMeta(network.ElectionMessage{
+						MessageType: network.EchoMessageType, ProcessIdSender: processId},
+						theChosenOne)
+				}
+			} else {
+				log.Printf("Echo doesn't receive response. Launch election !")
+				election <- 1
+			}
 
 		case theChosenOne = <-getTheChosenOne:
 			fmt.Printf("The Chosen One is %d\n", theChosenOne)
