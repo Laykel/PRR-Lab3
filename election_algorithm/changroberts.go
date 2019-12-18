@@ -64,7 +64,6 @@ func ChangAndRoberts(processId uint8,
 
 					log.Printf("Send Result. ChosenOne is %d\n", theChosenOne)
 
-
 					state = network.ResultMessageType
 				} else {
 					list.VisitedProcesses[processId] = aptitude

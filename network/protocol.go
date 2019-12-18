@@ -13,7 +13,7 @@ const (
 	AnnouncementMessageType = 0
 	ResultMessageType       = 1
 	AcknowledgeMessageType  = 2
-	EchoMessageType			= 3
+	EchoMessageType         = 3
 )
 
 // Read constants from parameters file

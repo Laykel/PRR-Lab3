@@ -1,0 +1,72 @@
+Main(0) :
+Wait until all sites are ready...
+All sites are ready. Algorithm will start!
+2019/12/18 14:08:06 Send Announcement after an election
+2019/12/18 14:08:06 Receive Announcement from 2
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 2
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 2
+2019/12/18 14:08:06 Send Result. ChosenOne is 0
+The Chosen One is 0
+2019/12/18 14:08:06 Receive Result from 2. The chosen one is 0
+The Chosen One is 0
+2019/12/18 14:08:14 extra data in buffer
+
+
+
+
+
+
+
+
+Main(1):
+Wait until all sites are ready...
+All sites are ready. Algorithm will start!
+2019/12/18 14:08:06 Send Announcement after an election
+2019/12/18 14:08:06 Receive Announcement from 0
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 0
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 0
+2019/12/18 14:08:06 Send Result. ChosenOne is 0
+The Chosen One is 0
+2019/12/18 14:08:06 Receive Result from 0. The chosen one is 0
+The Chosen One is 0
+2019/12/18 14:08:08 Send echo to 0
+2019/12/18 14:08:10 Send echo to 0
+2019/12/18 14:08:12 Send echo to 0
+2019/12/18 14:08:14 Send echo to 0
+2019/12/18 14:08:18 Echo doesn't receive response. Launch election !
+2019/12/18 14:08:18 Send Announcement after an election
+2019/12/18 14:08:20 Echo doesn't receive response. Launch election !
+2019/12/18 14:08:20 Send Announcement after an election
+2019/12/18 14:08:20 write udp 127.0.0.1:36446->127.0.0.1:9708: write: connection refused
+
+
+
+
+
+
+
+
+Main(2):
+Wait until all sites are ready...
+All sites are ready. Algorithm will start!
+2019/12/18 14:08:06 Send Announcement after an election
+2019/12/18 14:08:06 Receive Announcement from 1
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 1
+2019/12/18 14:08:06 Send Announcement after receiving Announcement
+2019/12/18 14:08:06 Receive Announcement from 1
+2019/12/18 14:08:06 Send Result. ChosenOne is 0
+2019/12/18 14:08:06 Receive Result from 1. The chosen one is 0
+The Chosen One is 0
+The Chosen One is 0
+2019/12/18 14:08:08 Send echo to 0
+2019/12/18 14:08:10 Send echo to 0
+2019/12/18 14:08:12 Send echo to 0
+2019/12/18 14:08:14 Send echo to 0
+2019/12/18 14:08:18 Echo doesn't receive response. Launch election !
+2019/12/18 14:08:18 Send Announcement after an election
+2019/12/18 14:08:18 write udp 127.0.0.1:49540->127.0.0.1:9706: write: connection refused

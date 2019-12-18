@@ -19,7 +19,6 @@ import (
 
 // Pass acknowledgment from listener to sender
 var ack = make(chan bool)
-var presence = make(chan bool)
 
 // Listen to UDP packets
 func Listen(address string, port int, req chan ElectionMessage) {
@@ -49,7 +48,7 @@ func Listen(address string, port int, req chan ElectionMessage) {
 		case EchoMessageType:
 			// Send acknowledge message
 			SendMeta(ElectionMessage{
-				MessageType:     AcknowledgeMessageType,
+				MessageType: AcknowledgeMessageType,
 			}, message.ProcessIdSender)
 		default:
 			// Send message back to main routine
@@ -57,7 +56,7 @@ func Listen(address string, port int, req chan ElectionMessage) {
 
 			// Send acknowledge message
 			SendMeta(ElectionMessage{
-				MessageType:     AcknowledgeMessageType,
+				MessageType: AcknowledgeMessageType,
 			}, message.ProcessIdSender)
 		}
 	}
@@ -66,7 +65,7 @@ func Listen(address string, port int, req chan ElectionMessage) {
 // Listen TCP (used to ping)
 func ListenTCP(address string, port int) {
 	// Listen for incoming traffic
-	listener, err := net.Listen("tcp", address + ":" + strconv.Itoa(port))
+	listener, err := net.Listen("tcp", address+":"+strconv.Itoa(port))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,8 +91,7 @@ func SendGob(message ElectionMessage, address string, port int) {
 
 	// Encode message as Gob and send it
 	encoder := gob.NewEncoder(conn)
-	err = encoder.Encode(message)
-	checkError(err)
+	_ = encoder.Encode(message)
 
 	timeout := time.After(2 * 1 * time.Second)
 
@@ -113,11 +111,12 @@ func SendGob(message ElectionMessage, address string, port int) {
 			return
 		case <-timeout:
 			fmt.Println("Timeout")
-			SendMeta(message,(message.ProcessIdSender+1)%Params.NbProcesses)
+			SendMeta(message, (message.ProcessIdSender+1)%Params.NbProcesses)
 			return
 		}
 	}
 }
+
 
 // Ping recipient
 func AreYouThere(address string) {

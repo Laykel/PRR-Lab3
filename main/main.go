@@ -89,16 +89,18 @@ func main() {
 		select {
 
 		case <-time.After(2 * 1 * time.Second):
-			if network.EchoHaveResponse {
-				if theChosenOne != processId {
+			if theChosenOne != processId {
+				if network.EchoHaveResponse {
 					log.Printf("Send echo to %d\n", theChosenOne)
 					network.SendMeta(network.ElectionMessage{
 						MessageType: network.EchoMessageType, ProcessIdSender: processId},
 						theChosenOne)
+
+				} else {
+					log.Printf("Echo doesn't receive response. Launch election !")
+					election <- 1
+					theChosenOne = processId
 				}
-			} else {
-				log.Printf("Echo doesn't receive response. Launch election !")
-				election <- 1
 			}
 
 		case theChosenOne = <-getTheChosenOne:
