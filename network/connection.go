@@ -44,14 +44,6 @@ func Listen(address string, port int, req chan ElectionMessage) {
 
 		// Depending on the message type
 		switch message.MessageType {
-		case AreYouThereMessageType:
-			// Send acknowledge message
-			SendMessage(ElectionMessage{
-				MessageType:     IAmThereMessageType,
-				ProcessIdSender: message.ProcessIdSender - 1,
-			})
-		case IAmThereMessageType:
-			presence <- true
 		case AcknowledgeMessageType:
 			ack <- true
 		default:
@@ -59,10 +51,9 @@ func Listen(address string, port int, req chan ElectionMessage) {
 			req <- message
 
 			// Send acknowledge message
-			SendMessage(ElectionMessage{
+			SendMeta(ElectionMessage{
 				MessageType:     AcknowledgeMessageType,
-				ProcessIdSender: message.ProcessIdSender - 1,
-			})
+			}, message.ProcessIdSender)
 		}
 	}
 }
@@ -83,7 +74,6 @@ func ListenTCP(address string, port int) {
 		}
 	}
 }
-
 
 // Send any struct to recipient as Gob
 func SendGob(message ElectionMessage, address string, port int) {
@@ -108,7 +98,8 @@ func SendGob(message ElectionMessage, address string, port int) {
 		case <-ack:
 			return
 		case <-timeout:
-			fmt.Println("Timeout") // TODO Do something when we timeout
+			fmt.Println("Timeout")
+			SendMeta(message,(message.ProcessIdSender+1)%Params.NbProcesses)
 			return
 		}
 	}

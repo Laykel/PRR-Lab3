@@ -78,7 +78,6 @@ func main() {
 	checkIfAllSitesAreReady(processId)
 	fmt.Println("All sites are ready. Algorithm will start!")
 
-	// TODO ChangAndRoberts should not need address and port
 	go election_algorithm.ChangAndRoberts(processId, aptitude, election, getTheChosenOne, action)
 
 	// TODO Is it the correct way to launch election?

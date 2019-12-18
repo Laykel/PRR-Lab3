@@ -13,8 +13,6 @@ const (
 	AnnouncementMessageType = 0
 	ResultMessageType       = 1
 	AcknowledgeMessageType  = 2
-	AreYouThereMessageType  = 3
-	IAmThereMessageType     = 4
 )
 
 // Read constants from parameters file
@@ -41,12 +39,19 @@ type ElectionMessage struct {
 }
 
 // Compute recipient IP and port and send message
-func SendMessage(message ElectionMessage) {
+func SendElectionMessage(message ElectionMessage) {
 	nextProcess := (message.ProcessIdSender + 1) % Params.NbProcesses
 
-	// Send acknowledge message
 	senderIP := Params.ProcessAddress[nextProcess].Address
 	senderPort := Params.ProcessAddress[nextProcess].Port
+
+	SendGob(message, senderIP, senderPort)
+}
+
+// Send meta information like ack or ping
+func SendMeta(message ElectionMessage, recipientId uint8) {
+	senderIP := Params.ProcessAddress[recipientId].Address
+	senderPort := Params.ProcessAddress[recipientId].Port
 
 	SendGob(message, senderIP, senderPort)
 }

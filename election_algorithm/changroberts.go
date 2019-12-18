@@ -57,7 +57,7 @@ func ChangAndRoberts(processId uint8,
 						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = 1
-					network.SendMessage(message)
+					network.SendElectionMessage(message)
 
 					state = network.ResultMessageType
 				} else {
@@ -69,7 +69,7 @@ func ChangAndRoberts(processId uint8,
 						VisitedProcesses: list.VisitedProcesses,
 						ProcessIdSender:  processId,
 					}
-					network.SendMessage(message)
+					network.SendElectionMessage(message)
 
 					state = network.AnnouncementMessageType
 				}
@@ -89,7 +89,7 @@ func ChangAndRoberts(processId uint8,
 						ProcessIdSender:  processId,
 					}
 					message.VisitedProcesses[processId] = aptitude
-					network.SendMessage(message)
+					network.SendElectionMessage(message)
 
 					state = network.AnnouncementMessageType
 				} else if state == network.AnnouncementMessageType {
@@ -102,7 +102,7 @@ func ChangAndRoberts(processId uint8,
 						VisitedProcesses: list.VisitedProcesses,
 						ProcessIdSender:  processId,
 					}
-					network.SendMessage(message)
+					network.SendElectionMessage(message)
 
 					state = network.ResultMessageType
 				}
@@ -116,7 +116,7 @@ func ChangAndRoberts(processId uint8,
 				ProcessIdSender:  processId,
 			}
 			message.VisitedProcesses[processId] = aptitude
-			network.SendMessage(message)
+			network.SendElectionMessage(message)
 
 			state = network.AnnouncementMessageType
 		}
