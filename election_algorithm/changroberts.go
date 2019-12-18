@@ -43,7 +43,6 @@ func ChangAndRoberts(processId uint8,
 
 				_, ok := list.VisitedProcesses[processId]
 				if ok {
-					// TODO keyOfMax = Bad English?
 					var maxApt, keyOfMax uint8
 					for k, v := range list.VisitedProcesses {
 						if maxApt < v {

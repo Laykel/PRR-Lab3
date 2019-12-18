@@ -32,16 +32,20 @@ n'est pas le cas, une nouvelle élection est démarrée.
 
 Le programme attend alors que tous les processus soient lancés, puis lance une élection.
 
-## Implémentation
-
-
 ### Packages et fichiers
 
-- Le package `main` contient le point d'entrée principal du programme. Il lance le serveur TCP dans une go routine afin d'écouter les connections entrantes, puis lance le processus client dans une autre go routine (en leur passant à chacun les channels nécessaires à la communication inter-processus.)
+- Le package `main` contient le point d'entrée principal du programme. Il lance un serveur pour répondre aux "pings" des autres processus, ainsi que pour lire les messages entrants. L'algorithme est ensuite initié et une élection lancée.
 - Le package `network` contient les fichiers suivants.
-    - Le fichier `protocol.go` contient les types utilisés pour la communication réseau ainsi que des valeurs importantes et les fonctions d'encodage en bytes et de décodage.
-    - Le fichier `connection.go` contient le serveur de réception TCP et la fonction d'envoi de requêtes.
+    - Le fichier `protocol.go` contient les types utilisés pour la communication réseau ainsi que des valeurs importantes.
+    - Le fichier `connection.go` contient le serveur de réception et la fonction d'envoi de requêtes.
 
 ### Problèmes connus
 
-- Nous avons effectué des tests uniquement sur le package `network`, malheureusement.
+Malheureusement, ayant d'autres priorités, nous n'avons pas pu régler tous les problèmes que nous rencontrons avec
+le programme. En effet, nous avons mal conçu certains aspects du laboratoire, ce qui résulte en des problèmes de
+concurrence : plusieurs envois simultanés semblent poser problème au décodeur Gob, erreur **"extra data in buffer"**.
+
+Néanmoins, avec un seul processus, l'algorithme semble suivre son cours comme voulu, ce qui nous laisse penser que son
+implémentation au moins, est juste. Plus nous ajoutons de processus, plus les problèmes précédemment cités surviennent.
+Par exemple, avec deux processus, il arrive souvent que le programme fonctionne et que le processus de plus grande
+aptitude soit correctement choisi.

@@ -82,7 +82,6 @@ func main() {
 
 	go election_algorithm.ChangAndRoberts(processId, aptitude, election, getTheChosenOne, action)
 
-	// TODO Is it the correct way to launch election?
 	election <- 1
 
 	for {
