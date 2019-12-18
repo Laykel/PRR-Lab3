@@ -10,6 +10,7 @@ package election_algorithm
 
 import (
 	"../network"
+	"log"
 )
 
 func Itob(i int) bool {
@@ -38,6 +39,8 @@ func ChangAndRoberts(processId uint8,
 			case network.AnnouncementMessageType:
 				list := msg
 
+				log.Printf("Receive Announcement from %d\n", list.ProcessIdSender)
+
 				_, ok := list.VisitedProcesses[processId]
 				if ok {
 					// TODO keyOfMax = Bad English?
@@ -59,6 +62,9 @@ func ChangAndRoberts(processId uint8,
 					message.VisitedProcesses[processId] = 1
 					network.SendElectionMessage(message)
 
+					log.Printf("Send Result. ChosenOne is %d\n", theChosenOne)
+
+
 					state = network.ResultMessageType
 				} else {
 					list.VisitedProcesses[processId] = aptitude
@@ -71,11 +77,15 @@ func ChangAndRoberts(processId uint8,
 					}
 					network.SendElectionMessage(message)
 
+					log.Printf("Send Announcement after receiving Announcement\n")
+
 					state = network.AnnouncementMessageType
 				}
 
 			case network.ResultMessageType:
 				list := msg
+
+				log.Printf("Receive Result from %d. The chosen one is %d\n", list.ProcessIdSender, list.Elect)
 
 				ok := list.VisitedProcesses[processId]
 				if Itob(int(ok)) {
@@ -91,6 +101,8 @@ func ChangAndRoberts(processId uint8,
 					message.VisitedProcesses[processId] = aptitude
 					network.SendElectionMessage(message)
 
+					log.Printf("Send Announcement after receiving Result\n")
+
 					state = network.AnnouncementMessageType
 				} else if state == network.AnnouncementMessageType {
 					theChosenOne = list.Elect
@@ -104,6 +116,8 @@ func ChangAndRoberts(processId uint8,
 					}
 					network.SendElectionMessage(message)
 
+					log.Printf("Send result with %d\n", theChosenOne)
+
 					state = network.ResultMessageType
 				}
 			}
@@ -116,7 +130,9 @@ func ChangAndRoberts(processId uint8,
 				ProcessIdSender:  processId,
 			}
 			message.VisitedProcesses[processId] = aptitude
-			network.SendElectionMessage(message)
+			go network.SendElectionMessage(message)
+
+			log.Printf("Send Announcement after an election\n")
 
 			state = network.AnnouncementMessageType
 		}

@@ -35,7 +35,7 @@ func loadParameters(file string) network.Parameters {
 
 func checkIfAllSitesAreReady(processId uint8) {
 	for i := uint8(0); i < network.Params.NbProcesses; i++ {
-		if i != processId-1 {
+		if i != processId {
 			recipientPort := strconv.Itoa(network.Params.ProcessAddress[0].Port + int(i))
 			recipientAddress := network.Params.ProcessAddress[i].Address + ":" + recipientPort
 
@@ -61,14 +61,14 @@ func main() {
 		tmp, _ := strconv.Atoi(os.Args[1])
 		processId = uint8(tmp)
 	} else {
-		processId = 0
+		log.Fatal("Wrong number of arguments. Please pass only the process id.")
 	}
 
 	//nbProcesses = network.Params.NbProcesses
-	aptitude = network.Params.ProcessAddress[processId-1].Aptitude
+	aptitude = network.Params.ProcessAddress[processId].Aptitude
 
-	address := network.Params.ProcessAddress[processId-1].Address
-	port := network.Params.ProcessAddress[processId-1].Port
+	address := network.Params.ProcessAddress[processId].Address
+	port := network.Params.ProcessAddress[processId].Port
 
 	theChosenOne = processId
 
@@ -88,7 +88,7 @@ func main() {
 
 		// TODO echo the chosen one periodically
 		case <-time.After(2 * 1 * time.Second):
-			println("salut")
+			//println("salut")
 
 		case theChosenOne = <-getTheChosenOne:
 			fmt.Printf("The Chosen One is %d\n", theChosenOne)
